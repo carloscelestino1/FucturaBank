@@ -1,17 +1,16 @@
-usuarios = []
 contas = list(range(100, 999))
+usuarios = []
 conta_usuario = []
 senhas = []
 contas_corrente = []
 contas_poupanca = []
 
 class ContaCorrente:
-    def __init__(self,nome,conta,senha, saldoCC, saldoCP):
+    def __init__(self,nome,conta,senha, saldoCC):
         self.nome = nome
         self.conta = conta
         self.senha = senha
         self.__SaldoCC = saldoCC
-        self.__SaldoCP = saldoCP
 
     def getSaldoCC(self):
         return self.__SaldoCC
@@ -19,115 +18,63 @@ class ContaCorrente:
     def setSaldoCC(self, SaldoCC):
         self.__SaldoCC = SaldoCC
 
+    def mostrar_dados(self,usuario,conta):
+        print("+--------------------------------------------------+")
+        print("Nome: ", usuario,
+                "\nConta: ", conta,
+                "\nsaldo C/C: R$", contas_corrente[index_usuario],
+                "\nsaldo C/P: R$", contas_poupanca[index_usuario])
+        print("+--------------------------------------------------+")
+
+    def deposito(self,nCnta,saldoCC):
+        contaCorrente.setSaldoCC(contaCorrente.getSaldoCC() + saldoCC)
+        contas_corrente[nCnta] = contaCorrente.getSaldoCC()
+        print("Operação realizada com sucesso!")
+
+    def saque(self,nCnta,valorSacar):
+        if valorSacar <= contaCorrente.getSaldoCC():
+            contaCorrente.setSaldoCC(contaCorrente.getSaldoCC() - valorSacar)
+            contas_corrente[nCnta] = contaCorrente.getSaldoCC()
+            print("Operação realizada com sucesso!")
+        else:
+            print("Operação não realizada. Saldo insuficiente!")
+
+    def aplicacao(self,nConta,transfP):
+        if transfP > contaCorrente.getSaldoCC():
+            print("Operação não realizada. Saldo insuficiente!")
+        else:
+            contaCorrente.setSaldoCC(contaCorrente.getSaldoCC() - transfP)
+            contaPoupanca.setSaldoCP(contaPoupanca.getSaldoCP() + transfP)
+            contas_corrente[nConta] = contaCorrente.getSaldoCC()
+            contas_poupanca[nConta] = contaPoupanca.getSaldoCP()
+            print("Operação realizada com sucesso!")
+
+class ContaPoupanca(ContaCorrente):
+    def __init__(self, nome, conta, senha, saldoCC,saldoCP):
+        super().__init__(nome, conta, senha, saldoCC)
+        self.__SaldoCP = saldoCP
+
     def getSaldoCP(self):
         return self.__SaldoCP
 
     def setSaldoCP(self, SaldoCP):
         self.__SaldoCP = SaldoCP
 
-    def mostrar_dados(self, nome, conta, senha):
-        if nome in usuarios and senha in senhas:
-            index_usuario = usuarios.index(nome)
-            index_senha = senhas.index(senha)
-            if index_usuario == index_senha:
-                print("+--------------------------------------------------+")
-                print("Operação realizada com sucesso!")
-                print("Nome: ", nome,
-                      "\nConta: ", conta,
-                      "\nsaldo C/C: R$", contaCorrente.getSaldoCC(),
-                      "\nsaldo C/P: R$", contaCorrente.getSaldoCP())
-                print("+--------------------------------------------------+")
-            else:
-                print("Senha inválida!")
+    def resgate(self,nConta,transfC):
+        if transfC > contaPoupanca.getSaldoCP():
+            print("Operação não realizada. Saldo insuficiente!")
         else:
-            print("Entre com login e senha validos.")
-
-    def deposito(self, nome, senha):
-        if nome in usuarios and senha in senhas:
-            index_usuario = usuarios.index(nome)
-            index_senha = senhas.index(senha)
-            if index_usuario == index_senha:
-                tipo = int(input("deposito na C/C = 1 ou C/P = 2 ? "))
-                if tipo == 1:
-                    deposito = float(input("Qual o valor do deposito? R$"))
-                    contaCorrente.setSaldoCC(deposito + contaCorrente.getSaldoCC())
-                else:
-                    deposito = float(input("Qual o valor do deposito? R$"))
-                    contaCorrente.setSaldoCP(deposito + contaCorrente.getSaldoCP())
-            else:
-                print("Senha inválida!")
-        else:
-            print("Entre com login e senha validos.")
-
-    def saque(self, nome, senha):
-        if nome in usuarios and senha in senhas:
-            index_usuario = usuarios.index(nome)
-            index_senha = senhas.index(senha)
-            if index_usuario == index_senha:
-                tipo3 = int(input("Deseja sacar da C/C = 1 ou C/P = 2 ?"))
-                valorSacar = float(input("digite o valor R$ "))
-                if tipo3 == 1:
-                    if valorSacar <= self.getSaldoCC():
-                        contaCorrente.setSaldoCC(self.getSaldoCC() - valorSacar)
-                    else:
-                        print("Operação não realizada. Saldo insuficiente!")
-                else:
-                    if valorSacar <= self.getSaldoCP():
-                        contaCorrente.setSaldoCP(self.getSaldoCP() - valorSacar)
-                    else:
-                        print("Operação não realizada. Saldo insuficiente!")
-            else:
-                print("Senha inválida!")
-        else:
-            print("Entre com login e senha validos.")
-
-    def aplicacao(self, nome, senha):
-        if nome in usuarios and senha in senhas:
-            index_usuario = usuarios.index(nome)
-            index_senha = senhas.index(senha)
-            if index_usuario == index_senha:
-                transfP = float(input("quanto deseja transferir? "))
-                if transfP > self.getSaldoCC():
-                    print("Operação não realizada. Saldo insuficiente!")
-                else:
-                    contaCorrente.setSaldoCC(self.getSaldoCC() - transfP)
-                    contaCorrente.setSaldoCP(self.getSaldoCP() + transfP)
-            else:
-                print("Senha inválida!")
-        else:
-            print("Entre com login e senha validos.")
-
-
-class ContaPoupanca(ContaCorrente):
-    def __init__(self,nome,conta,senha, saldoCC, saldoCP):
-        super().__init__(nome,conta,senha, saldoCC, saldoCP)
-        index_usuario = usuarios.index(nome)
-        self.__SaldoCC = contas_corrente[index_usuario]
-        self.__SaldoCP = contas_poupanca[index_usuario]
-
-    def resgate(self, nome, senha,saldoCC, saldoCP):
-        if nome in usuarios and senha in senhas:
-            index_usuario = usuarios.index(nome)
-            index_senha = senhas.index(senha)
-            if index_usuario == index_senha:
-                transfC = float(input("quanto deseja transferir? "))
-                if transfC > contaCorrente.getSaldoCP():
-                    print("Operação não realizada. Saldo insuficiente!")
-                else:
-                    contaCorrente.setSaldoCP(contaCorrente.getSaldoCP() - transfC)
-                    contaCorrente.getSaldoCP()
-                    contaCorrente.setSaldoCC(contaCorrente.getSaldoCC() + transfC)
-                    contaCorrente.getSaldoCP()
-            else:
-                print("Senha inválida!")
-        else:
-            print("Entre com login e senha validos.")
-
-
+            contaPoupanca.setSaldoCP(contaPoupanca.getSaldoCP() - transfC)
+            contaCorrente.setSaldoCC(contaCorrente.getSaldoCC() + transfC)
+            contas_corrente[nConta] = contaCorrente.getSaldoCC()
+            contas_poupanca[nConta] = contaPoupanca.getSaldoCP()
+            print("Operação realizada com sucesso!")
 
 contaCorrente = ContaCorrente
-cont = "SIM"
-while cont == "SIM":
+contaPoupanca = ContaPoupanca
+
+app = "SIM"
+while app == "SIM":
     print("✦" * 54)
     print("BANCO FUCTURA".center(69))
     print()
@@ -144,98 +91,129 @@ while cont == "SIM":
     print("✦" * 50)
 
     if selecao == 1:
-        nome = input("digite seu nome: ")
-        usuarios.append(nome)
-        senha = input("crie sua senha com 4 digitos: ")
-        conta = contas.pop(0)
-        conta_usuario.append(conta)
-        while len(list(senha)) != 4:
-            print("senha invalida.")
-            senha = input("digite uma senha com 4 digitos: ")
-
+        usuario = input("Nome do titular: ")
+        senhaUsuario = input("Crie sua senha com 4 digitos: :")
+        while usuario in usuarios or senhaUsuario in senhas:
+            print("digite um usuario e senha validos.")
+            usuario = input("digite seu nome: ")
+            senhaUsuario = input("crie sua senha com 4 digitos: ")
         else:
-            conta_usuario.append(conta)
-            senhas.append(senha)
-            contas_corrente.append(0)
-            contas_poupanca.append(0)
-            index_usuario = usuarios.index(nome)
-            saldoCC = contas_corrente[index_usuario]
-            saldoCP = contas_poupanca[index_usuario]
-            contaCorrente = ContaCorrente(nome, conta, senha, saldoCC,saldoCP)
-            primeiro_deposito = int(input("Para ativar sua conta é necessario realizar um deposito, deseja realizar agora? sim(1) ou não(2)"))
-            if primeiro_deposito == 1:
-                contaCorrente.deposito(nome,senha)
-                print("Parabéns, sua conta de numero ",conta, " está ativa!")
-                contaCorrente.mostrar_dados(nome, conta, senha)
+            while len(list(senhaUsuario)) != 4:
+                print("senha invalida.")
+                senhaUsuario = input("digite uma senha com 4 digitos: ")
             else:
-                print("volte logo!")
-                break
+                usuarios.append(usuario)
+                senhas.append(senhaUsuario)
+                conta = contas.pop(0)
+                conta_usuario.append(conta)
+                contas_corrente.append(0)
+                contas_poupanca.append(0)
+                index_usuario = usuarios.index(usuario)
+                saldoCC = contas_corrente[index_usuario]
+                saldoCP = contas_poupanca[index_usuario]
+                contaCorrente = ContaCorrente(usuario,conta,senhaUsuario,saldoCC)
+                ativarConta = int(input("Sua conta está em análise. \nPara ativar sua conta, realize um deposito."
+                                        "\nDeseja realizar agora? sim(1) / não(2). "))
+                if ativarConta == 1:
+                    saldoCC = float(input("Qual o valor do deposito? R$"))
+                    contaCorrente.deposito(index_usuario,saldoCC)
+                    print("Bem vindo ao Bando Fuctura!\nSua conta de número ", conta, " foi ativada.")
+                else:
+                    print("Volte logo!")
+                    break
 
     elif selecao == 2:
-        nome = input("digite seu login: ")
-        senha = input("digite sua senha: ")
-        if nome not in usuarios or senha not in senhas:
-            print("login ou senha invalidos.")
+        usuario = input("Nome do titular: ")
+        senhaUsuario = input("Digite sua senha: ")
+        cont = 0
+        while cont < 2 and senhaUsuario not in senhas:
+            print("Senha ou login inválidos!")
+            print("Você tem mais ",2 - cont," chances.")
+            usuario = input("Nome do titular: ")
+            senhaUsuario = input("Digite sua senha: ")
+            cont += 1
 
         else:
-            index_conta = usuarios.index(nome)
-            conta = conta_usuario[index_conta]
-            saldoCC = contaCorrente.getSaldoCC()
-            saldoCP = contaCorrente.getSaldoCP()
-            contaCorrente.mostrar_dados(nome, conta, senha)
+            index_usuario = usuarios.index(usuario)
+            conta = conta_usuario[index_usuario]
+            contaCorrente.mostrar_dados(usuario, conta)
 
     elif selecao == 3:
-        nome = input("digite seu login: ")
-        senha = input("digite sua senha: ")
-        if nome not in usuarios or senha not in senhas:
-            print("login ou senha invalidos.")
+        usuario = input("Nome do titular: ")
+        senhaUsuario = input("Digite sua senha: ")
+        cont = 0
+        while cont < 2 and senhaUsuario not in senhas:
+            print("Senha ou login inválidos!")
+            print("Você tem mais ", 2 - cont, " chances.")
+            usuario = input("Nome do titular: ")
+            senhaUsuario = input("Digite sua senha: ")
+            cont += 1
         else:
-            index_conta = usuarios.index(nome)
-            conta = conta_usuario[index_conta]
-            saldoCC = contaCorrente.getSaldoCC()
-            saldoCP = contaCorrente.getSaldoCP()
-            contaCorrente.deposito(nome, senha)
-            contaCorrente.mostrar_dados(nome, conta, senha)
+            indice = usuarios.index(usuario)
+            saldoCC = float(input("Qual o valor do deposito? R$"))
+            contaCorrente.deposito(indice,saldoCC)
 
-    elif selecao == 4:
-        nome = input("digite seu login: ")
-        senha = input("digite sua senha: ")
-        if nome not in usuarios or senha not in senhas:
-            print("login ou senha invalidos.")
+    elif selecao == 4 :
+        usuario = input("Nome do titular: ")
+        senhaUsuario = input("Digite sua senha: ")
+        cont = 0
+        while cont < 2 and senhaUsuario not in senhas:
+            print("Senha ou login inválidos!")
+            print("Você tem mais ", 2 - cont, " chances.")
+            usuario = input("Nome do titular: ")
+            senhaUsuario = input("Digite sua senha: ")
+            cont += 1
         else:
-            index_conta = usuarios.index(nome)
-            conta = conta_usuario[index_conta]
-            saldoCC = contaCorrente.getSaldoCC()
-            saldoCP = contaCorrente.getSaldoCP()
-            contaCorrente.saque(nome, senha)
-            contaCorrente.mostrar_dados(nome, conta, senha)
+            valorSacar = float(input("digite o valor R$ "))
+            indice = usuarios.index(usuario)
+            contaCorrente.saque(indice,valorSacar)
 
     elif selecao == 5:
-        nome = input("digite seu login: ")
-        senha = input("digite sua senha: ")
-        if nome not in usuarios or senha not in senhas:
-            print("login ou senha invalidos.")
+        usuario = input("Nome do titular: ")
+        senhaUsuario = input("Digite sua senha: ")
+        cont = 0
+        while cont < 2 and senhaUsuario not in senhas:
+            print("Senha ou login inválidos!")
+            print("Você tem mais ", 2 - cont, " chances.")
+            usuario = input("Nome do titular: ")
+            senhaUsuario = input("Digite sua senha: ")
+            cont += 1
         else:
-            index_conta = usuarios.index(nome)
-            conta = conta_usuario[index_conta]
-            contaCorrente.aplicacao(nome, senha)
-            contaCorrente.mostrar_dados(nome, conta, senha)
+            index_usuario = usuarios.index(usuario)
+            usuario = usuarios[index_usuario]
+            index_conta = usuarios.index(usuario)
+            conta = conta_usuario[index_usuario]
+            saldoCC = contas_corrente[index_usuario]
+            saldoCP = contas_poupanca[index_usuario]
+            indice = usuarios.index(usuario)
+            transfP = float(input("quanto deseja transferir? "))
+            contaPoupanca = ContaPoupanca(usuario, conta, senhaUsuario, saldoCC, saldoCP)
+            contaCorrente.aplicacao(indice,transfP)
 
     elif selecao == 6:
-        nome = input("digite seu login: ")
-        senha = input("digite sua senha: ")
-        if nome not in usuarios or senha not in senhas:
-            print("login ou senha invalidos.")
+        usuario = input("Nome do titular: ")
+        senhaUsuario = input("Digite sua senha: ")
+        cont = 0
+        while cont < 2 and senhaUsuario not in senhas:
+            print("Senha ou login inválidos!")
+            print("Você tem mais ", 2 - cont, " chances.")
+            usuario = input("Nome do titular: ")
+            senhaUsuario = input("Digite sua senha: ")
+            cont += 1
         else:
-            index_conta = usuarios.index(nome)
-            conta = conta_usuario[index_conta]
-            saldoCC = contaCorrente.getSaldoCC()
-            saldoCP = contaCorrente.getSaldoCP()
-            resgatar = ContaPoupanca(nome,conta, senha,saldoCC, saldoCP)
-            resgatar.resgate(nome, senha,saldoCC, saldoCP)
-            resgatar.mostrar_dados(nome, conta, senha)
-
+            index_usuario = usuarios.index(usuario)
+            usuario = usuarios[index_usuario]
+            index_conta = usuarios.index(usuario)
+            conta = conta_usuario[index_usuario]
+            saldoCC = contas_corrente[index_usuario]
+            saldoCP = contas_poupanca[index_usuario]
+            indice = usuarios.index(usuario)
+            transfC = float(input("quanto deseja transferir? "))
+            contaPoupanca = ContaPoupanca(usuario, conta, senhaUsuario, saldoCC,saldoCP)
+            contaPoupanca.resgate(indice,transfC)
     else:
-        print("volte sempre!")
+        print("Volte logo!")
         break
+else: pass
+
 
